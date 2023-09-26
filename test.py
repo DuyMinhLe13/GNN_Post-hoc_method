@@ -30,6 +30,6 @@ def eval_model(model):
     print(' Accuracy on the test images: %.4f %%' % (test_acc))
     return test_acc
 
-densenet_model.load_state_dict(torch.load(os.path.dirname(os.path.realpath(__file__)) + '/weights/densenet_model.pth', map_location=torch.device(device)))
+densenet_gnn_model.load_state_dict(torch.load('weights/densenet_model.pth', map_location=torch.device(device)))
 
 eval_model(densenet_gnn_model)
