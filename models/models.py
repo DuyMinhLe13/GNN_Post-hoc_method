@@ -1,6 +1,7 @@
 import torch
 import torchvision
 import numpy as np
+from GNNPlugins import GNNModel
 
 class DensenetGnnModel(torch.nn.Module):
     def __init__(self, num_classes, n_layers, embedding_size, n_heads=3, model='densenet201'):
