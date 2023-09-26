@@ -1,10 +1,11 @@
 import torch
 import torchvision
+import os
 
 BATCH_SIZE = 50
 IMAGE_SIZE = (224, 224)
 
-dataset_dir = "../datasets/stanford_dogs/"
+dataset_dir = os.path.dirname(os.path.realpath(__file__)) + '/stanford_dogs/'
 train_tfms = torchvision.transforms.Compose([torchvision.transforms.Resize(IMAGE_SIZE),
                                              torchvision.transforms.RandomHorizontalFlip(),
                                              torchvision.transforms.RandomRotation(15),
