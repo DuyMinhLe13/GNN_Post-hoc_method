@@ -1,9 +1,7 @@
 import torch
 import torchvision
 import os
-
-BATCH_SIZE = 50
-IMAGE_SIZE = (224, 224)
+from ..config.py import *
 
 dataset_dir = os.path.dirname(os.path.realpath(__file__)) + '/stanford_dogs/'
 train_tfms = torchvision.transforms.Compose([torchvision.transforms.Resize(IMAGE_SIZE),
