@@ -18,3 +18,4 @@ def create_dataloader(image_size, batch_size):
     
     test_image_folder = torchvision.datasets.ImageFolder(root=dataset_dir+"test", transform = test_tfms)
     test_ds = torch.utils.data.DataLoader(test_image_folder, batch_size = batch_size, shuffle=False, num_workers = 2)
+    return train_ds, test_ds
