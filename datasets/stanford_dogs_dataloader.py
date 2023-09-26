@@ -1,9 +1,5 @@
-import os
 import torch
-import shutil
-import torch_geometric
 import torchvision
-import numpy as np
 
 BATCH_SIZE = 50
 IMAGE_SIZE = (224, 224)
