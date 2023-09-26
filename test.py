@@ -1,10 +1,11 @@
 from models.models import DensenetGnnModel
-from datasets.stanford_dogs_dataloader import train_ds
-from datasets.stanford_dogs_dataloader import test_ds
+from datasets.stanford_dogs_dataloader import create_dataloader
 import torch
 from tqdm import tqdm
+from configs import *
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+train_ds, test_ds = create_dataloader(image_size=IMAGE_SIZE, batch_size=BATCH_SIZE)
 densenet_gnn_model = DensenetGnnModel(num_classes=120, 
                                       n_layers=0, 
                                       embedding_size=1920,
