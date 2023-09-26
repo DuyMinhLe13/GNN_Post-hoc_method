@@ -1,7 +1,7 @@
 import torch
 import torchvision
 import os
-from ..config.py import *
+from ..configs.py import *
 
 dataset_dir = os.path.dirname(os.path.realpath(__file__)) + '/stanford_dogs/'
 train_tfms = torchvision.transforms.Compose([torchvision.transforms.Resize(IMAGE_SIZE),
