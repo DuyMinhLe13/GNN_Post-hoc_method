@@ -1,16 +1,48 @@
-from models.models import DensenetGnnModel
-from datasets.stanford_dogs_dataloader import create_dataloader
 import torch
 from tqdm import tqdm
 from configs import *
+import argparse
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-train_ds, test_ds = create_dataloader(image_size=IMAGE_SIZE, batch_size=BATCH_SIZE)
-densenet_gnn_model = DensenetGnnModel(num_classes=120, 
-                                      n_layers=0, 
-                                      embedding_size=1920,
-                                      n_heads=3)
-densenet_gnn_model = densenet_gnn_model.to(device)
+parser = argparse.ArgumentParser()
+parser.add_argument("--batch_size", default=BATCH_SIZE)
+parser.add_argument("--model", default='densenet201', help="available models: densenet201, densenet161, swint_small, swint_big, convnext_base, convnext_large, mobilenet_small, mobilenet_large")
+parser.add_argument("--dataset", default='stanford_dogs', help="available datasets: stanford_dogs, cub_200_2011, nabirds. Path of dataset: datasets/name_dataset")
+parser.add_argument("--add_gnn", default=1, help="1: add gnn plugins; 0: original models")
+
+args = parser.parse_args()
+num_classes = 120
+if args.dataset == 'stanford_dogs':
+    from datasets.stanford_dogs_dataloader import create_dataloader
+    train_ds, test_ds = create_dataloader(image_size=IMAGE_SIZE, batch_size=int(args.batch_size))
+    num_classes = 120
+elif args.dataset == 'cub_200_2011':
+    from datasets.cub_200_2011_dataloader import create_dataloader
+    train_ds, test_ds = create_dataloader(image_size=IMAGE_SIZE, batch_size=int(args.batch_size))
+    num_classes = 200
+elif args.dataset == 'nabirds':
+    from datasets.nabirds_dataloader import create_dataloader
+    train_ds, test_ds = create_dataloader(image_size=IMAGE_SIZE, batch_size=int(args.batch_size))
+    num_classes = 555
+
+if args.model[:5] == 'dense':
+    if int(args.add_gnn):
+        from models.models import DensenetGnnModel
+        model = DensenetGnnModel(num_classes=num_classes, n_layers=0, embedding_size=1920, n_heads=3, model = args.model)
+    else:
+        if args.model == 'densenet201': model = torchvision.models.densenet201(weights='DEFAULT')
+        if args.model == 'densenet161': model = torchvision.models.densenet161(weights='DEFAULT')
+        model.classifier = torch.nn.Linear(model.classifier.in_features, num_classes)
+elif args.model[:5] == 'swint':
+    if int(args.add_gnn):
+        from models.models import VitGnnModel
+        model = VitGnnModel(num_classes=num_classes, n_layers=0, embedding_size=1920, n_heads=3, model = args.model)
+    else: 
+        if args.model == 'swint_small': model = torchvision.models.swin_v2_small(weights='DEFAULT')
+        if args.model == 'swint_big': model = torchvision.models.swin_v2_big(weights='DEFAULT')
+        model.head = torch.nn.Linear(model.head.in_features, num_classes)
+      
+model = model.to(device)
 
 def eval_model(model):
     model.eval()
