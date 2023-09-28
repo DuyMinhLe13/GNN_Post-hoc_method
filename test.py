@@ -2,6 +2,7 @@ import torch
 from tqdm import tqdm
 from configs import *
 import argparse
+import torchvision
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 parser = argparse.ArgumentParser()
@@ -9,6 +10,7 @@ parser.add_argument("--batch_size", default=BATCH_SIZE)
 parser.add_argument("--model", default='densenet201', help="available models: densenet201, densenet161, swint_small, swint_big, convnext_base, convnext_large, mobilenet_small, mobilenet_large")
 parser.add_argument("--dataset", default='stanford_dogs', help="available datasets: stanford_dogs, cub_200_2011, nabirds. Path of dataset: datasets/name_dataset")
 parser.add_argument("--add_gnn", default=1, help="1: add gnn plugins; 0: original models")
+parser.add_argument("--weights_path", default='weights/densenet_model.pth', help="path of weights file. Example: weights/name_model.pth")
 
 args = parser.parse_args()
 num_classes = 120
@@ -36,11 +38,27 @@ if args.model[:5] == 'dense':
 elif args.model[:5] == 'swint':
     if int(args.add_gnn):
         from models.models import VitGnnModel
-        model = VitGnnModel(num_classes=num_classes, n_layers=0, embedding_size=1920, n_heads=3, model = args.model)
+        model = VitGnnModel(num_classes=num_classes, n_layers=0, embedding_size=1024, n_heads=3, model = args.model)
     else: 
         if args.model == 'swint_small': model = torchvision.models.swin_v2_small(weights='DEFAULT')
         if args.model == 'swint_big': model = torchvision.models.swin_v2_big(weights='DEFAULT')
         model.head = torch.nn.Linear(model.head.in_features, num_classes)
+elif args.model[:5] == 'convn':
+    if int(args.add_gnn):
+        from models.models import ConvNextGnnModel
+        model = ConvNextGnnModel(num_classes=num_classes, n_layers=0, embedding_size=1024 if args.model == 'convnext_base' else 1536, n_heads=3, model = args.model)
+    else:
+        if args.model == 'convnext_base': model = torchvision.models.convnext_base(weights='DEFAULT')
+        if args.model == 'convnext_large': model = torchvision.models.convnext_large(weights='DEFAULT')
+        model.head = torch.nn.Linear(model.classifier[2].in_features, num_classes)
+elif args.model[:5] == 'mobil':
+    if int(args.add_gnn):
+        from models.models import MobilenetGnnModel
+        model = MobilenetGnnModel(num_classes=num_classes, n_layers=0, embedding_size=1024, n_heads=3, model = args.model)
+    else:
+        if args.model == 'mobilenet_small': model = torchvision.models.mobilenet_v3_small(weights='DEFAULT')
+        if args.model == 'mobilenet_large': model = torchvision.models.mobilenet_v3_large(weights='DEFAULT')
+        model.classifier[3] = torch.nn.Linear(model.classifier[3].in_features, num_classes)
       
 model = model.to(device)
 
@@ -63,6 +81,6 @@ def eval_model(model):
     print(' Accuracy on the test images: %.4f %%' % (test_acc))
     return test_acc
 
-densenet_gnn_model.load_state_dict(torch.load('weights/densenet_model.pth', map_location=torch.device(device)))
+model.load_state_dict(torch.load('weights/densenet_model.pth', map_location=torch.device(device)))
 
-eval_model(densenet_gnn_model)
+eval_model(model)
