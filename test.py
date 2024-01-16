@@ -81,6 +81,6 @@ def eval_model(model):
     print(' Accuracy on the test images: %.4f %%' % (test_acc))
     return test_acc
 
-model.load_state_dict(torch.load('weights/densenet_model.pth', map_location=torch.device(device)))
+model.load_state_dict(torch.load(args.weights_path, map_location=torch.device(device)))
 
 eval_model(model)
