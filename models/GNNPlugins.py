@@ -49,3 +49,49 @@ class GNNModel(torch.nn.Module):
 
     x = self.out(x)
     return x
+
+class Attention(torch.nn.Module):
+    def __init__(self, input_dim, aggr='mean'):
+        super(Attention, self).__init__()
+        self.input_dim = input_dim
+        self.aggr = aggr
+        self.query = torch.nn.Linear(input_dim, input_dim)
+        self.key = torch.nn.Linear(input_dim, input_dim)
+        self.value = torch.nn.Linear(input_dim, input_dim)
+        self.softmax = torch.nn.Softmax(dim=1)
+
+    def forward(self, x):
+        queries = self.query(x)
+        keys = self.key(x)
+        values = self.value(x)
+        scores = torch.mm(queries, keys.transpose(0, 1)) / (self.input_dim ** 0.5)
+        attention = self.softmax(scores)
+        weighted = torch.mm(attention, values)
+        if aggr == 'mean': weighted /= x.shape[0]
+        return weighted
+
+
+class ImprovedAttention(torch.nn.Module):
+    def __init__(self, input_dim, num_classes):
+        super(ImprovedAttention, self).__init__()
+        self.input_dim = input_dim
+        self.lin_skip = torch.nn.Linear(input_dim, input_dim)
+        self.lin_beta = torch.nn.Linear(3 * input_dim, 1)
+        self.query = torch.nn.Linear(input_dim, input_dim)
+        self.key = torch.nn.Linear(input_dim, input_dim)
+        self.value = torch.nn.Linear(input_dim, input_dim)
+        self.softmax = torch.nn.Softmax(dim=1)
+        self.fc = torch.nn.Linear(input_dim, num_classes)
+
+    def forward(self, x):
+        x_r = self.lin_skip(x)
+        queries = self.query(x)
+        keys = self.key(x)
+        values = self.value(x)
+        scores = torch.mm(queries, keys.transpose(0, 1)) / (self.input_dim ** 0.5)
+        attention = self.softmax(scores)
+        x = torch.mm(attention, values)
+        beta = self.lin_beta(torch.cat([x, x_r, x - x_r], dim=-1))
+        beta = beta.sigmoid()
+        x = beta * x_r + (1 - beta) * x
+        return self.fc(x)
