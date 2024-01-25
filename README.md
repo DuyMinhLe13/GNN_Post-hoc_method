@@ -32,6 +32,7 @@ datasets
 * `torch`
 * `torchvision`
 * `numpy`
+* `datasets`
 * `tqdm`
 * `pillow`
 * `beautifulsoup4`
