@@ -36,6 +36,11 @@ datasets
 * `tqdm`
 * `pillow`
 * `beautifulsoup4`
+* `scipy`
+* `pandas`
+* `argparse`
+* `os`
+* `shutil`
 
 # Run
 ```
