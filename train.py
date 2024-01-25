@@ -15,6 +15,15 @@ parser.add_argument("--n_epochs", default=100, help="Number of epochs")
 parser.add_argument("--learning_rate", default=1e-5, help="Learning rate. Recommend 1e-6 -> 5e-5")
 
 args = parser.parse_args()
+
+# Handle exception
+
+if int(args.batch_size) < 0: raise "batch_size cannot negative"
+if int(args.add_gnn) < 0 or int(args.add_gnn) > 3: raise "add_gnn syntax error" 
+if int(args.n_epochs) < 0: raise "n_epochs cannot negative"
+
+# Load dataset
+
 num_classes = 120
 if args.dataset == 'stanford_dogs':
     from datasets.stanford_dogs_dataloader import create_dataloader
@@ -33,6 +42,8 @@ elif args.dataset == 'tiny_imagenet':
     train_ds, test_ds = create_dataloader(image_size=IMAGE_SIZE, batch_size=int(args.batch_size))
     num_classes = 200
 else: raise "datasets syntax error"
+
+# Build model
 
 if args.model[:5] == 'dense':
     if int(args.add_gnn):
@@ -69,6 +80,8 @@ elif args.model[:5] == 'mobil':
 else: raise "model syntax error"
       
 model = model.to(device)
+
+# Train model
 
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.RAdam(model.parameters(), lr=float(args.learning_rate))
