@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--batch_size", default=BATCH_SIZE)
 parser.add_argument("--model", default='densenet201', help="available models: densenet201, densenet161, swint_small, swint_big, convnext_base, convnext_large, mobilenet_small, mobilenet_large")
 parser.add_argument("--dataset", default='stanford_dogs', help="available datasets: stanford_dogs, cub_200_2011, nabirds, tiny_imagenet. Path of dataset: datasets/name_dataset")
-parser.add_argument("--add_gnn", default=1, help="1: add gnn plugins; 0: original models")
+parser.add_argument("--add_gnn", default=1, help="0: original models; 1: add gnn; 2: add attention; 3: add improved-attention")
 parser.add_argument("--weights_path", default='weights/densenet_model.pth', help="path of weights file. Example: weights/name_model.pth")
 parser.add_argument("--n_epochs", default=100, help="Number of epochs")
 parser.add_argument("--learning_rate", default=1e-5, help="Learning rate. Recommend 1e-6 -> 5e-5")
@@ -37,7 +37,7 @@ else: raise "datasets syntax error"
 if args.model[:5] == 'dense':
     if int(args.add_gnn):
         from models.models import DensenetGnnModel
-        model = DensenetGnnModel(num_classes=num_classes, n_layers=0, embedding_size=1920, n_heads=3, model = args.model)
+        model = DensenetGnnModel(num_classes=num_classes, n_layers=0, embedding_size=1920, n_heads=3, model = args.model, gnn_type = int(args.add_gnn))
     else:
         if args.model == 'densenet201': model = torchvision.models.densenet201(weights='DEFAULT')
         if args.model == 'densenet161': model = torchvision.models.densenet161(weights='DEFAULT')
@@ -45,7 +45,7 @@ if args.model[:5] == 'dense':
 elif args.model[:5] == 'swint':
     if int(args.add_gnn):
         from models.models import VitGnnModel
-        model = VitGnnModel(num_classes=num_classes, n_layers=0, embedding_size=1024, n_heads=3, model = args.model)
+        model = VitGnnModel(num_classes=num_classes, n_layers=0, embedding_size=1024, n_heads=3, model = args.model, gnn_type = int(args.add_gnn))
     else: 
         if args.model == 'swint_small': model = torchvision.models.swin_v2_small(weights='DEFAULT')
         if args.model == 'swint_big': model = torchvision.models.swin_v2_big(weights='DEFAULT')
@@ -53,7 +53,7 @@ elif args.model[:5] == 'swint':
 elif args.model[:5] == 'convn':
     if int(args.add_gnn):
         from models.models import ConvNextGnnModel
-        model = ConvNextGnnModel(num_classes=num_classes, n_layers=0, embedding_size=1024 if args.model == 'convnext_base' else 1536, n_heads=3, model = args.model)
+        model = ConvNextGnnModel(num_classes=num_classes, n_layers=0, embedding_size=1024 if args.model == 'convnext_base' else 1536, n_heads=3, model = args.model, gnn_type = int(args.add_gnn))
     else:
         if args.model == 'convnext_base': model = torchvision.models.convnext_base(weights='DEFAULT')
         if args.model == 'convnext_large': model = torchvision.models.convnext_large(weights='DEFAULT')
@@ -61,7 +61,7 @@ elif args.model[:5] == 'convn':
 elif args.model[:5] == 'mobil':
     if int(args.add_gnn):
         from models.models import MobilenetGnnModel
-        model = MobilenetGnnModel(num_classes=num_classes, n_layers=0, embedding_size=1024, n_heads=3, model = args.model)
+        model = MobilenetGnnModel(num_classes=num_classes, n_layers=0, embedding_size=1024, n_heads=3, model = args.model, gnn_type = int(args.add_gnn))
     else:
         if args.model == 'mobilenet_small': model = torchvision.models.mobilenet_v3_small(weights='DEFAULT')
         if args.model == 'mobilenet_large': model = torchvision.models.mobilenet_v3_large(weights='DEFAULT')
