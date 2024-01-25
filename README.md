@@ -11,6 +11,8 @@
 * `torchvision`
 * `numpy`
 * `tqdm`
+* `pillow`
+* `beautifulsoup4`
 
 # Run
 ```
