@@ -35,7 +35,7 @@ for name in os.listdir(dataset_dir + 'images'):
     os.mkdir(dataset_dir + 'dataset/train/' + name)
     os.mkdir(dataset_dir + 'dataset/test/' + name)
 
-for id in images.index:
+for id in tqdm(images.index):
     raw_img = Image.open(dataset_dir + 'images/' + images.loc[id, 'name']).convert('RGB')
     img_size = max(bboxes.loc[id, 'width'], bboxes.loc[id, 'height'])
     cropped_img = raw_img.crop((bboxes.loc[id, 'x'], bboxes.loc[id, 'y'],
