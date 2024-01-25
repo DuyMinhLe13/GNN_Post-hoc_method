@@ -2,6 +2,7 @@ import os
 import torch
 import shutil
 import torchvision
+from tqdm import tqdm
 from datasets import load_dataset
 
 dataset_dir = os.path.dirname(os.path.realpath(__file__)) + '/tiny_imagenet/'
@@ -20,9 +21,9 @@ os.mkdir(dataset_dir + 'dataset/test')
 for name in range(200):
     os.mkdir(dataset_dir + 'dataset/train/' + str(name))
     os.mkdir(dataset_dir + 'dataset/test/' + str(name))
-for id, data in enumerate(train_datasets):
+for id, data in tqdm(enumerate(train_datasets)):
     data['image'].save(f"{dataset_dir}dataset/train/{data['label']}/{id}.jpg")
-for id, data in enumerate(test_datasets):
+for id, data in tqdm(enumerate(test_datasets)):
     data['image'].save(f"{dataset_dir}dataset/test/{data['label']}/{id}.jpg")
 
 def create_dataloader(image_size, batch_size):
