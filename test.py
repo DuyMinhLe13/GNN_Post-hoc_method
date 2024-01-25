@@ -13,6 +13,14 @@ parser.add_argument("--add_gnn", default=1, help="0: original models; 1: add gnn
 parser.add_argument("--weights_path", default='weights/model.pth', help="path of weights file. Example: weights/name_model.pth")
 
 args = parser.parse_args()
+
+# Handle exception
+
+if int(args.batch_size) < 0: raise "batch_size cannot negative"
+if int(args.add_gnn) < 0 or int(args.add_gnn) > 3: raise "add_gnn syntax error" 
+
+# Load dataset
+
 num_classes = 120
 if args.dataset == 'stanford_dogs':
     from datasets.stanford_dogs_dataloader import create_dataloader
@@ -31,6 +39,8 @@ elif args.dataset == 'tiny_imagenet':
     train_ds, test_ds = create_dataloader(image_size=IMAGE_SIZE, batch_size=int(args.batch_size))
     num_classes = 200
 else: raise "datasets syntax error"
+
+# Build model
 
 if args.model[:5] == 'dense':
     if int(args.add_gnn):
@@ -67,6 +77,8 @@ elif args.model[:5] == 'mobil':
 else: raise "model syntax error"
       
 model = model.to(device)
+
+# Evaluating model
 
 def eval_model(model):
     model.eval()
