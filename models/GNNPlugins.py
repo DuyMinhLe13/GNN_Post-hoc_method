@@ -51,16 +51,19 @@ class GNNModel(torch.nn.Module):
     return x
 
 class Attention(torch.nn.Module):
-    def __init__(self, input_dim, aggr='mean'):
+    def __init__(self, input_dim, num_classes, aggr='mean'):
         super(Attention, self).__init__()
         self.input_dim = input_dim
         self.aggr = aggr
+        self.lin_skip = torch.nn.Linear(input_dim, input_dim)
         self.query = torch.nn.Linear(input_dim, input_dim)
         self.key = torch.nn.Linear(input_dim, input_dim)
         self.value = torch.nn.Linear(input_dim, input_dim)
         self.softmax = torch.nn.Softmax(dim=1)
+        self.fc = torch.nn.Linear(input_dim, num_classes)
 
     def forward(self, x):
+        x_r = self.lin_skip(x)
         queries = self.query(x)
         keys = self.key(x)
         values = self.value(x)
@@ -68,7 +71,8 @@ class Attention(torch.nn.Module):
         attention = self.softmax(scores)
         weighted = torch.mm(attention, values)
         if aggr == 'mean': weighted /= x.shape[0]
-        return weighted
+        weighted += x_r
+        return self.fc(weighted)
 
 
 class ImprovedAttention(torch.nn.Module):
