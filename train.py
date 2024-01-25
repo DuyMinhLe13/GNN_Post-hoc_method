@@ -26,19 +26,19 @@ if int(args.n_epochs) < 0: raise "n_epochs cannot negative"
 
 num_classes = 120
 if args.dataset == 'stanford_dogs':
-    from datasets.stanford_dogs_dataloader import create_dataloader
+    from dataset.stanford_dogs_dataloader import create_dataloader
     train_ds, test_ds = create_dataloader(image_size=IMAGE_SIZE, batch_size=int(args.batch_size))
     num_classes = 120
 elif args.dataset == 'cub_200_2011':
-    from datasets.cub_200_2011_dataloader import create_dataloader
+    from dataset.cub_200_2011_dataloader import create_dataloader
     train_ds, test_ds = create_dataloader(image_size=IMAGE_SIZE, batch_size=int(args.batch_size))
     num_classes = 200
 elif args.dataset == 'nabirds':
-    from datasets.nabirds_dataloader import create_dataloader
+    from dataset.nabirds_dataloader import create_dataloader
     train_ds, test_ds = create_dataloader(image_size=IMAGE_SIZE, batch_size=int(args.batch_size))
     num_classes = 555
 elif args.dataset == 'tiny_imagenet':
-    from datasets.tiny_imagenet_dataloader import create_dataloader
+    from dataset.tiny_imagenet_dataloader import create_dataloader
     train_ds, test_ds = create_dataloader(image_size=IMAGE_SIZE, batch_size=int(args.batch_size))
     num_classes = 200
 else: raise "datasets syntax error"
