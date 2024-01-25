@@ -6,6 +6,10 @@ from datasets import load_dataset
 
 dataset_dir = os.path.dirname(os.path.realpath(__file__)) + '/tiny_imagenet/'
 
+if os.path.exists(dataset_dir):
+    shutil.rmtree(dataset_dir)
+os.mkdir(dataset_dir)
+
 train_datasets = load_dataset('Maysee/tiny-imagenet', split='train')
 test_datasets = load_dataset('Maysee/tiny-imagenet', split='valid')
 if os.path.exists(dataset_dir + 'dataset'):
