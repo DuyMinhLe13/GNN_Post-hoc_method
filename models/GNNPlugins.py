@@ -57,7 +57,7 @@ class GNNModel(torch.nn.Module):
     x = self.out(x)
     return x
 
-class Attention(torch.nn.Module):
+class AttentionModel(torch.nn.Module):
     def __init__(self, input_dim, num_classes, aggr='mean'):
         super(Attention, self).__init__()
         self.input_dim = input_dim
@@ -82,7 +82,7 @@ class Attention(torch.nn.Module):
         return self.fc(weighted)
 
 
-class ImprovedAttention(torch.nn.Module):
+class ImprovedAttentionModel(torch.nn.Module):
     def __init__(self, input_dim, num_classes):
         super(ImprovedAttention, self).__init__()
         self.input_dim = input_dim
