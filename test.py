@@ -8,7 +8,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 parser = argparse.ArgumentParser()
 parser.add_argument("--batch_size", default=BATCH_SIZE)
 parser.add_argument("--model", default='densenet201', help="available models: densenet201, densenet161, swint_small, swint_big, convnext_base, convnext_large, mobilenet_small, mobilenet_large")
-parser.add_argument("--dataset", default='stanford_dogs', help="available datasets: stanford_dogs, cub_200_2011, nabirds. Path of dataset: datasets/name_dataset")
+parser.add_argument("--dataset", default='stanford_dogs', help="available datasets: stanford_dogs, cub_200_2011, nabirds, tiny_imagenet. Path of dataset: datasets/name_dataset")
 parser.add_argument("--add_gnn", default=1, help="1: add gnn plugins; 0: original models")
 parser.add_argument("--weights_path", default='weights/densenet_model.pth', help="path of weights file. Example: weights/name_model.pth")
 
@@ -26,6 +26,11 @@ elif args.dataset == 'nabirds':
     from datasets.nabirds_dataloader import create_dataloader
     train_ds, test_ds = create_dataloader(image_size=IMAGE_SIZE, batch_size=int(args.batch_size))
     num_classes = 555
+elif args.dataset == 'tiny_imagenet':
+    from datasets.tiny_imagenet_dataloader import create_dataloader
+    train_ds, test_ds = create_dataloader(image_size=IMAGE_SIZE, batch_size=int(args.batch_size))
+    num_classes = 200
+else: raise "datasets syntax error"
 
 if args.model[:5] == 'dense':
     if int(args.add_gnn):
@@ -59,6 +64,7 @@ elif args.model[:5] == 'mobil':
         if args.model == 'mobilenet_small': model = torchvision.models.mobilenet_v3_small(weights='DEFAULT')
         if args.model == 'mobilenet_large': model = torchvision.models.mobilenet_v3_large(weights='DEFAULT')
         model.classifier[3] = torch.nn.Linear(model.classifier[3].in_features, num_classes)
+else: raise "model syntax error"
       
 model = model.to(device)
 
