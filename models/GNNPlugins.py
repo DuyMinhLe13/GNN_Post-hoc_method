@@ -10,11 +10,13 @@ class GNNModel(torch.nn.Module):
     self.n_heads = n_heads
     self.edge_dim = edge_dim
     self.num_classes = num_classes
-    
+
+    self.skip_layers = torch.nn.ModuleList([])
     self.conv_layers = torch.nn.ModuleList([])
     self.transf_layers = torch.nn.ModuleList([])
     self.bn_layers = torch.nn.ModuleList([])
 
+    self.lin_skip1 = torch.nn.Linear(self.feature_size, self.embedding_size)
     self.conv1 = torch_geometric.nn.TransformerConv(self.feature_size, 
                                 self.embedding_size, 
                                 heads=self.n_heads, 
@@ -25,6 +27,7 @@ class GNNModel(torch.nn.Module):
     self.bn1 = torch.nn.BatchNorm1d(self.embedding_size) 
 
     for i in range(self.n_layers):
+      self.skip_layers.append(torch.nn.Linear(self.embedding_size, self.embedding_size))
       self.conv_layers.append(torch_geometric.nn.TransformerConv(self.embedding_size, 
                                               self.embedding_size, 
                                               heads=self.n_heads, 
@@ -38,12 +41,16 @@ class GNNModel(torch.nn.Module):
     self.out = torch.nn.Linear(self.embedding_size, self.num_classes)
 
   def forward(self, x, edge_index, edge_attr):
+    x_skip = self.lin_skip1(x)
     x = self.conv1(x, edge_index, edge_attr)
+    x += x_skip
     x = torch.nn.functional.relu(self.transf1(x))
     x = self.bn1(x)
 
     for i in range(self.n_layers):
+      x_skip = self.skip_layers[i](x)
       x = self.conv_layers[i](x, edge_index, edge_attr)
+      x += x_skip
       x = torch.nn.functional.relu(self.transf_layers[i](x))
       x = self.bn_layers[i](x)
 
