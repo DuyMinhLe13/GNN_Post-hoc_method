@@ -16,7 +16,7 @@ class GNNModel(torch.nn.Module):
     self.transf_layers = torch.nn.ModuleList([])
     self.bn_layers = torch.nn.ModuleList([])
 
-    self.lin_skip1 = torch.nn.Linear(self.feature_size, self.embedding_size)
+    self.lin_skip1 = torch.nn.Linear(self.feature_size, self.embedding_size * self.n_heads)
     self.conv1 = torch_geometric.nn.TransformerConv(self.feature_size, 
                                 self.embedding_size, 
                                 heads=self.n_heads, 
@@ -27,7 +27,7 @@ class GNNModel(torch.nn.Module):
     self.bn1 = torch.nn.BatchNorm1d(self.embedding_size) 
 
     for i in range(self.n_layers):
-      self.skip_layers.append(torch.nn.Linear(self.embedding_size, self.embedding_size))
+      self.skip_layers.append(torch.nn.Linear(self.embedding_size, self.embedding_size * self.n_heads))
       self.conv_layers.append(torch_geometric.nn.TransformerConv(self.embedding_size, 
                                               self.embedding_size, 
                                               heads=self.n_heads, 
