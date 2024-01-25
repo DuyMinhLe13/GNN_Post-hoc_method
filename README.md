@@ -3,7 +3,7 @@
 * [CUB-200-2011](http://www.vision.caltech.edu/visipedia/CUB-200-2011.html)
 * [NA-Birds](https://dl.allaboutbirds.org/nabirds)
 * [Tiny-Imagenet](https://www.kaggle.com/c/tiny-imagenet) <br/>
-Put these datasets except Tiny-Imagenet in respective folders (\<root\>/datasets/<dataset_name>) and Unzip file. The folder sturture as follow:
+Put these datasets except Tiny-Imagenet in respective folders (\<root\>/datasets/<dataset_name>) and Unzip file. The folder structure as follow:
 ```
 datasets
   |————stanford_dogs
