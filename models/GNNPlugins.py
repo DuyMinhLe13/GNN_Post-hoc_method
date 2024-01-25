@@ -59,7 +59,7 @@ class GNNModel(torch.nn.Module):
 
 class AttentionModel(torch.nn.Module):
     def __init__(self, input_dim, num_classes, aggr='mean'):
-        super(Attention, self).__init__()
+        super(AttentionModel, self).__init__()
         self.input_dim = input_dim
         self.aggr = aggr
         self.lin_skip = torch.nn.Linear(input_dim, input_dim)
@@ -84,7 +84,7 @@ class AttentionModel(torch.nn.Module):
 
 class ImprovedAttentionModel(torch.nn.Module):
     def __init__(self, input_dim, num_classes):
-        super(ImprovedAttention, self).__init__()
+        super(ImprovedAttentionModel, self).__init__()
         self.input_dim = input_dim
         self.lin_skip = torch.nn.Linear(input_dim, input_dim)
         self.lin_beta = torch.nn.Linear(3 * input_dim, 1)
