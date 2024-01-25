@@ -1,7 +1,11 @@
 import torch
 import torchvision
+import shutil
 import os
+from tqdm import tqdm
 import scipy
+from PIL import Image
+from bs4 import BeautifulSoup
 
 dataset_dir = os.path.dirname(os.path.realpath(__file__)) + '/stanford_dogs/'
 
@@ -30,7 +34,7 @@ for name in tqdm(train_list):
 
 for name in tqdm(test_list):
     raw_img = Image.open(dataset_dir + 'Images/' + name)
-    with open('Annotation/' + name[:-4], 'r') as f:
+    with open(dataset_dir + 'Annotation/' + name[:-4], 'r') as f:
         contents = f.read()
         soup = BeautifulSoup(contents, 'lxml')
     cropped_img = raw_img.crop((int(soup.xmin.contents[0]),
@@ -49,9 +53,9 @@ def create_dataloader(image_size, batch_size):
                                                 torchvision.transforms.ToTensor(),
                                                 torchvision.transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
     
-    train_image_folder = torchvision.datasets.ImageFolder(root=dataset_dir+'train', transform = train_tfms)
+    train_image_folder = torchvision.datasets.ImageFolder(root=dataset_dir+'dataset/train', transform = train_tfms)
     train_ds = torch.utils.data.DataLoader(train_image_folder, batch_size = batch_size, shuffle=True, num_workers = 2)
     
-    test_image_folder = torchvision.datasets.ImageFolder(root=dataset_dir+"test", transform = test_tfms)
+    test_image_folder = torchvision.datasets.ImageFolder(root=dataset_dir+"dataset/test", transform = test_tfms)
     test_ds = torch.utils.data.DataLoader(test_image_folder, batch_size = batch_size, shuffle=False, num_workers = 2)
     return train_ds, test_ds
