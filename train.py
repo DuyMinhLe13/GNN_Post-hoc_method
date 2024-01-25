@@ -10,7 +10,7 @@ parser.add_argument("--batch_size", default=BATCH_SIZE)
 parser.add_argument("--model", default='densenet201', help="available models: densenet201, densenet161, swint_small, swint_big, convnext_base, convnext_large, mobilenet_small, mobilenet_large")
 parser.add_argument("--dataset", default='stanford_dogs', help="available datasets: stanford_dogs, cub_200_2011, nabirds, tiny_imagenet. Path of dataset: datasets/name_dataset")
 parser.add_argument("--add_gnn", default=1, help="0: original models; 1: add gnn; 2: add attention; 3: add improved-attention")
-parser.add_argument("--weights_path", default='weights/densenet_model.pth', help="path of weights file. Example: weights/name_model.pth")
+parser.add_argument("--weights_path", default='weights/model.pth', help="path of weights file. Example: weights/name_model.pth")
 parser.add_argument("--n_epochs", default=100, help="Number of epochs")
 parser.add_argument("--learning_rate", default=1e-5, help="Learning rate. Recommend 1e-6 -> 5e-5")
 
