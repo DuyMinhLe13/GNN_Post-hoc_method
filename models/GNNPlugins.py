@@ -77,7 +77,7 @@ class AttentionModel(torch.nn.Module):
         scores = torch.mm(queries, keys.transpose(0, 1)) / (self.input_dim ** 0.5)
         attention = self.softmax(scores)
         weighted = torch.mm(attention, values)
-        if aggr == 'mean': weighted /= x.shape[0]
+        if self.aggr == 'mean': weighted /= x.shape[0]
         weighted += x_r
         return self.fc(weighted)
 
