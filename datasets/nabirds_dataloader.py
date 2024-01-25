@@ -31,7 +31,7 @@ if os.path.exists(dataset_dir + 'dataset'):
 os.mkdir(dataset_dir + 'dataset')
 os.mkdir(dataset_dir + 'dataset/train')
 os.mkdir(dataset_dir + 'dataset/test')
-for name in os.listdir('dataset_dir + images'):
+for name in os.listdir(dataset_dir + 'images'):
     os.mkdir(dataset_dir + 'dataset/train/' + name)
     os.mkdir(dataset_dir + 'dataset/test/' + name)
 
