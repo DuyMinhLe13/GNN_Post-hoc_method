@@ -17,8 +17,8 @@ class GNNModel(torch.nn.Module):
     self.bn_layers = torch.nn.ModuleList([])
 
     self.lin_skip1 = torch.nn.Linear(self.feature_size, self.embedding_size * self.n_heads)
-    self.conv1 = torch_geometric.nn.TransformerConv(self.feature_size,   # You can change other GNN models from here
-                                self.embedding_size, 
+    self.conv1 = torch_geometric.nn.TransformerConv(self.feature_size,   # You can change other GNN models from here such as
+                                self.embedding_size,                     # GCN, GAT, GraphSAGE, etc,...
                                 heads=self.n_heads, 
                                 dropout=dropout_rate,
                                 edge_dim=self.edge_dim,
